@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mantenimiento Hada</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+<!-- ============ INGRESO ============ -->
+<div id="vista-login" class="login" hidden>
+  <form id="f-login" class="login-caja">
+    <div class="marca marca-grande"><img src="img/logo.png" alt="" class="logo" onerror="this.remove()"><span>Hada</span></div>
+    <h1>Solicitudes de mantenimiento</h1>
+    <label>Correo<input type="email" name="correo" autocomplete="username" required></label>
+    <label>Contraseña<input type="password" name="password" autocomplete="current-password" required></label>
+    <p id="login-error" class="error" role="alert" hidden></p>
+    <button class="btn" type="submit">Entrar</button>
+    <p class="login-pie">¿Sin usuario? Reporta una falla en <a href="reportar.html">el formulario de reporte</a>. Si olvidaste tu contraseña, pídele una nueva al administrador.</p>
+  </form>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="vista-app" hidden>
+  <header class="barra">
+    <div class="marca"><img src="img/logo.png" alt="" class="logo" onerror="this.remove()"><span>Hada</span><span class="marca-sub">Mantenimiento</span></div>
+    <div class="usuario">
+      <span><strong id="u-nombre"></strong> <span id="u-rol" class="u-rol"></span></span>
+      <button id="btn-pass" class="link" type="button">Cambiar contraseña</button>
+      <button id="btn-salir" class="link" type="button">Salir</button>
+    </div>
+  </header>
+
+  <nav class="pestanas" aria-label="Secciones">
+    <button type="button" data-vista="tablero" aria-current="page">Solicitudes</button>
+    <button type="button" data-vista="nueva">Nueva solicitud</button>
+    <button type="button" data-vista="admin" id="tab-admin" hidden>Administración</button>
+  </nav>
+
+  <main class="contenido">
+    <!-- Tablero -->
+    <section id="v-tablero">
+      <div id="flujo" class="flujo" role="group" aria-label="Filtrar por estado"></div>
+      <div class="filtros">
+        <input type="search" id="fil-texto" placeholder="Buscar línea, actividad, técnico, aviso…" aria-label="Buscar">
+        <select id="fil-area" aria-label="Área"></select>
+        <label class="check" id="fil-mias-wrap" hidden><input type="checkbox" id="fil-mias"> Solo asignadas a mí</label>
+      </div>
+      <div id="lista" class="lista"></div>
+    </section>
+
+    <!-- Nueva solicitud -->
+    <section id="v-nueva" hidden>
+      <form id="f-nueva" class="formulario">
+        <h2>Nueva solicitud</h2>
+        <div class="rejilla">
+          <label>Área<select name="area_id" required></select></label>
+          <label>Línea<select name="linea_id"></select></label>
+          <label>Tipo<input name="tipo" maxlength="80" list="tipos" placeholder="Mecánico, eléctrico…"></label>
+          <label>Prioridad<select name="prioridad"><option>Alta</option><option selected>Media</option><option>Baja</option></select></label>
+        </div>
+        <label>Actividad<input name="actividad" maxlength="600" required placeholder="Qué hay que hacer"></label>
+        <label>Descripción<textarea name="descripcion" maxlength="2000" rows="4" placeholder="Detalles de la falla, ubicación, síntomas"></textarea></label>
+        <div class="rejilla">
+          <label>Solicitante<input name="solicitante" maxlength="120"></label>
+          <label>Responsable<select name="responsable_id"></select></label>
+          <label>¿Para cuándo se necesita?<input type="date" name="fecha_requerida"></label>
+          <label>Aviso SAP<input name="aviso" maxlength="30" pattern="[A-Za-z0-9][A-Za-z0-9 \-]{0,29}" title="Letras, números, espacios y guiones"></label>
+        </div>
+        <div class="form-pie"><button class="btn" type="submit">Crear solicitud</button></div>
+      </form>
+      <datalist id="tipos"><option>Mecánico</option><option>Eléctrico</option><option>Locativo</option><option>Instrumentación</option><option>Neumático</option></datalist>
+    </section>
+
+    <!-- Administración -->
+    <section id="v-admin" hidden>
+      <div class="admin-cols">
+        <div>
+          <div class="admin-auto">
+            <div><h2>Asignación automática</h2>
+            <p class="ayuda">Cada solicitud nueva se asigna sola al técnico de su línea o área con menos trabajos abiertos.</p></div>
+            <button type="button" class="btn sec" id="btn-autoasignar">Asignar pendientes sin responsable</button>
+          </div>
+          <h2>Usuarios</h2>
+          <div id="tabla-usuarios" class="tabla-wrap"></div>
+          <form id="f-usuario" class="formulario">
+            <h3>Crear usuario</h3>
+            <div class="rejilla">
+              <label>Nombre completo<input name="nombre_completo" maxlength="120" required></label>
+              <label>Correo<input name="correo" type="email" required></label>
+              <label>Contraseña inicial<input name="password" type="text" minlength="8" required autocomplete="off"></label>
+              <label>Rol<select name="rol" required>
+                <option value="mantenimiento">Mantenimiento</option>
+                <option value="coordinador_produccion">Coordinador de producción</option>
+                <option value="administrador">Administrador</option></select></label>
+              <label>Área<select name="area_id"></select></label>
+              <label>Línea<select name="linea_id"></select></label>
+            </div>
+            <p class="ayuda">Para técnicos: el área y la línea definen qué solicitudes le llegan automáticamente.</p>
+            <div class="form-pie"><button class="btn" type="submit">Crear usuario</button></div>
+          </form>
+        </div>
+        <div>
+          <h2>Áreas y líneas</h2>
+          <div id="lista-areas"></div>
+          <form id="f-area" class="formulario">
+            <h3>Crear área</h3>
+            <div class="rejilla">
+              <label>Nombre<input name="nombre" maxlength="80" required></label>
+              <label>Coordinador<select name="coordinador_id"></select></label>
+            </div>
+            <div class="form-pie"><button class="btn" type="submit">Crear área</button></div>
+          </form>
+          <form id="f-linea" class="formulario">
+            <h3>Crear línea</h3>
+            <div class="rejilla">
+              <label>Área<select name="area_id" required></select></label>
+              <label>Nombre<input name="nombre" maxlength="100" required></label>
+            </div>
+            <div class="form-pie"><button class="btn" type="submit">Crear línea</button></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<dialog id="dlg-detalle" class="dlg-detalle" aria-label="Detalle de la solicitud"></dialog>
+<dialog id="dlg-pregunta" class="dlg-chico"></dialog>
+<dialog id="dlg-usuario" class="dlg-chico"></dialog>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

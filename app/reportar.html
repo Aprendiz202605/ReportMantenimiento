@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reportar una falla | Mantenimiento Hada</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body class="pagina-reporte">
+  <main class="reporte">
+    <div class="marca marca-grande"><img src="img/logo.png" alt="" class="logo" onerror="this.remove()"><span>Hada</span></div>
+    <form id="f-reporte" class="formulario">
+      <h1>Reportar una falla</h1>
+      <p class="ayuda">El reporte le llega de inmediato al técnico que elijas.</p>
+      <div class="rejilla">
+        <label>Área<select name="area_id" required><option value="">Cargando…</option></select></label>
+        <label>Línea<select name="linea_id"></select></label>
+      </div>
+      <label>¿Qué está fallando?<input name="actividad" maxlength="600" required></label>
+      <label>Detalles<textarea name="descripcion" maxlength="2000" rows="4" placeholder="Desde cuándo, qué se escucha o se ve, dónde está"></textarea></label>
+      <div class="rejilla">
+        <label>¿Quién lo atiende?<select name="responsable_id" required><option value="">Cargando…</option></select></label>
+        <label>¿Para cuándo se necesita?<input type="date" name="fecha_requerida"></label>
+      </div>
+      <div class="rejilla">
+        <label>Tu nombre<input name="solicitante" maxlength="120" required></label>
+        <label>Prioridad<select name="prioridad"><option>Alta</option><option selected>Media</option><option>Baja</option></select></label>
+      </div>
+      <label class="trampa" aria-hidden="true">Sitio web<input name="sitio_web" tabindex="-1" autocomplete="off"></label>
+      <p id="rep-error" class="error" role="alert" hidden></p>
+      <div class="form-pie"><button class="btn" type="submit">Enviar reporte</button></div>
+    </form>
+    <div id="rep-ok" class="reporte-ok" hidden>
+      <p>Reporte enviado</p>
+      <p id="rep-num" class="rep-num"></p>
+      <p id="rep-detalle"></p>
+      <button class="btn sec" type="button" id="rep-otro">Reportar otra falla</button>
+    </div>
+    <p class="login-pie"><a href="index.html">Entrar con usuario</a></p>
+  </main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/reportar.js"></script>
+</body>
+</html>
